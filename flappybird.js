@@ -27,7 +27,8 @@ let topPipeImg;
 let bottomPipeImg;
 
 //physics
-velocityX = -2.15;
+let velocityX = -2.15;
+let velocityY = 0;
 
 window.onload=function(){
     board=document.getElementById("board");
@@ -52,7 +53,8 @@ window.onload=function(){
 
     requestAnimationFrame(update);
     setInterval(placePipes,1500);
-
+    document.addEventListener("keydown",moveBird);
+    document.addEventListener("touchstart",tmoveBird);
 
 } 
 
@@ -61,6 +63,7 @@ function update(){
 
     context.clearRect(0,0,board.width,board.height);
     //redraw bird
+    bird.y += velocityY;
     context.drawImage(birdImg,bird.x,bird.y,bird.width,bird.height);
 
     for(let i = 0; i < pipeArray.length; i++){
@@ -96,4 +99,14 @@ function placePipes() {
 
     pipeArray.push(topPipe);
     pipeArray.push(bottomPipe);
+}
+
+function moveBird(e) {
+    if (e.code == "Space" || e.code == "ArrowUp"){
+        velocityY = -6;
+    }
+}
+
+function tmoveBird(){
+    velocityY = -6;
 }
