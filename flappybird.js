@@ -29,7 +29,7 @@ let gameOver = false;
 //physics
 let velocityX = -2.15;
 let velocityY = 0;
-let gravity = 0.28;
+let gravity = 0.2;
 let score = 0;
 
 window.onload=function(){
