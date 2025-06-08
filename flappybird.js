@@ -25,10 +25,12 @@ let pipeY = 0;
 
 let topPipeImg;
 let bottomPipeImg;
-
+let gameOver = false;
 //physics
 let velocityX = -2.15;
 let velocityY = 0;
+let gravity = 0.28;
+let score = 0;
 
 window.onload=function(){
     board=document.getElementById("board");
@@ -59,22 +61,51 @@ window.onload=function(){
 } 
 
 function update(){
+    if(gameOver){
+        return;
+    }
+
     requestAnimationFrame(update);
 
     context.clearRect(0,0,board.width,board.height);
     //redraw bird
-    bird.y += velocityY;
+    velocityY += gravity;
+    //bird.y += velocityY;
+    bird.y = Math.max(bird.y+velocityY,0);
     context.drawImage(birdImg,bird.x,bird.y,bird.width,bird.height);
 
     for(let i = 0; i < pipeArray.length; i++){
         let pipe = pipeArray[i];
         pipe.x += velocityX;
         context.drawImage(pipe.img,pipe.x,pipe.y,pipe.width,pipe.height); 
+        if(!pipe.passed && bird.x > pipe.x + pipe.width){
+            score += 0.5;
+            pipe.passed = true; //since 2 pipes are there
+        }
+
+        if (detectCollision(bird,pipe)){
+            gameOver = true;
+        }
+        if (bird.y > board.height){
+            gameOver = true;
+        }
+        if(gameOver){
+            context.fillStyle = "white";
+            context.font = "50px Arial";
+            context.fillText("GAME OVER",30,320);
+        }
     }
 
+
+    context.fillStyle = "white";
+    context.font = "45px sans-serif";
+    context.fillText(score,5,50);
 }
 
 function placePipes() {
+    if(gameOver){
+        return;
+    }
 
     let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
     let openingSpace = pipeHeight/4;
@@ -109,4 +140,12 @@ function moveBird(e) {
 
 function tmoveBird(){
     velocityY = -6;
+}
+
+function detectCollision(a,b){
+    return !(a.x > b.x + b.width ||
+             a.x + a.width < b.x ||
+             a.y > b.y + b.height ||
+             a.y + a.height < b.y
+    );
 }
